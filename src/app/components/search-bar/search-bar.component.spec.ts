@@ -9,12 +9,12 @@ import { MatInputModule } from '@angular/material/input';
 import { SearchBarComponent } from './search-bar.component';
 
 describe('SearchBarComponent', () => {
-  let component: SearchBarComponent;
-  let fixture: ComponentFixture<SearchBarComponent>;
-
   const currentItemCount: number = 5;
   const totalItemCount: number = 100;
   const searchTerm: string = 'testSearchTerm';
+
+  let component: SearchBarComponent;
+  let fixture: ComponentFixture<SearchBarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

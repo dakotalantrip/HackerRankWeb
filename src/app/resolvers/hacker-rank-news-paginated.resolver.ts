@@ -1,8 +1,8 @@
-import { ActivatedRouteSnapshot, Resolve, ResolveFn } from '@angular/router';
-import { HackerRankService } from '../services/hacker-rank.service';
-import { HackerRankItem } from '../models/hacker-rank-item.model';
-import { catchError, EMPTY, Observable, tap } from 'rxjs';
+import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
+import { catchError, EMPTY, Observable } from 'rxjs';
+
+import { HackerRankItem } from '../models/hacker-rank-item.model';
 import { PaginatedResult } from '../models/paginated-result.model';
 import { SearchService } from '../services/search.service';
 
@@ -12,9 +12,7 @@ export class HackerRankNewsPaginatedResolver
 {
   constructor(private searchService: SearchService) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot
-  ): Observable<PaginatedResult<HackerRankItem>> {
+  resolve(): Observable<PaginatedResult<HackerRankItem>> {
     return this.searchService.search('').pipe(
       catchError(() => {
         return EMPTY;

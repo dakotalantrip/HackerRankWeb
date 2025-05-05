@@ -1,14 +1,13 @@
+import { ActivatedRoute } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ClientPaginationComponent } from './client-pagination.component';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
 import { HackerRankItem } from '../../models/hacker-rank-item.model';
 
 describe('ClientPaginationComponent', () => {
   let component: ClientPaginationComponent;
   let fixture: ComponentFixture<ClientPaginationComponent>;
-  let data: HackerRankItem[] = [
+  const data: HackerRankItem[] = [
     {
       id: 1,
       title: 'Item 1',
@@ -55,7 +54,21 @@ describe('ClientPaginationComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should contain appropriate field names for the displayed columns', () => {
+    const hackerRankItemKeys = Object.keys(data[0]);
+    component.displayedColumns.forEach((column) => {
+      expect(hackerRankItemKeys).toContain(column);
+    });
+  });
+
   it('should load data from resolver', () => {
     expect(component.dataSource.data).toEqual(data);
+  });
+
+  it('should filter the dataSource when onSearch() is called', () => {
+    const searchTerm = 'Item 1';
+    component.onSearch(searchTerm);
+
+    expect(component.dataSource.filter).toBe(searchTerm);
   });
 });

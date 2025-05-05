@@ -2,6 +2,7 @@ import { Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import {
+  BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
   Observable,
@@ -15,8 +16,8 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
 import { HackerRankItem } from '../../models/hacker-rank-item.model';
 import { PaginatedResult } from '../../models/paginated-result.model';
-import { SearchService } from '../../services/search.service';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-server-pagination',
@@ -25,7 +26,6 @@ import { SearchBarComponent } from '../../components/search-bar/search-bar.compo
   styleUrl: './server-pagination.component.scss',
 })
 export class ServerPaginationComponent implements OnInit, OnDestroy {
-  public currentPage: number = 1;
   public hackerRankItems: HackerRankItem[] = [];
   public paginatedResultSignal = signal<PaginatedResult<HackerRankItem>>({
     items: [],
@@ -34,6 +34,8 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
   });
   public searchTerm: string = '';
 
+  private currentPageSubject: BehaviorSubject<number> =
+    new BehaviorSubject<number>(1);
   private searchTermSubject: Subject<string> = new Subject<string>();
   private subscription: Subscription = new Subscription();
 
@@ -41,12 +43,18 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private searchService: SearchService
   ) {
-    const routeData = this.route.snapshot.data[
+    const routeData = (this.route.snapshot?.data[
       'hackerRankItems'
-    ] as PaginatedResult<HackerRankItem>;
+    ] as PaginatedResult<HackerRankItem>) ?? {
+      items: [],
+      totalItems: 0,
+      totalPages: 0,
+    };
 
     this.paginatedResultSignal.set(routeData);
   }
+
+  //#region Lifecycle
 
   ngOnInit(): void {
     this.subscription.add(
@@ -62,15 +70,35 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
         )
         .subscribe()
     );
+
+    this.subscription.add(
+      this.currentPageSubject
+        .asObservable()
+        .pipe(
+          distinctUntilChanged(),
+          switchMap((value: number) => this.search(this.searchTerm))
+        )
+        .subscribe()
+    );
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
+  //#endregion
+
+  //#region Getters
+
+  public get currentPage(): number {
+    return this.currentPageSubject.value;
+  }
+
   public get paginatedResult(): PaginatedResult<HackerRankItem> {
     return this.paginatedResultSignal();
   }
+
+  //#endregion
 
   //#region Events
 
@@ -80,8 +108,7 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
   });
 
   public onScroll(): void {
-    this.currentPage++;
-    this.search(this.searchTerm).subscribe();
+    this.currentPageSubject.next(this.currentPage + 1);
   }
 
   public onSearch(searchTerm: string): void {

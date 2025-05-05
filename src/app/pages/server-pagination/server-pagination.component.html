@@ -1,9 +1,11 @@
 <h2>Server pagination</h2>
+
 <app-search-bar
   [currentItemCount]="hackerRankItems.length"
   [totalItemCount]="paginatedResult.totalItems"
   (search)="onSearch($event)"
 />
+
 <mat-nav-list
   infiniteScroll
   [scrollWindow]="false"
@@ -16,5 +18,7 @@
   <a mat-list-item [href]="hackerRankItem.url"
     >{{ hackerRankItem.title }} - {{ hackerRankItem.author }}</a
   >
+  } @if (!hackerRankItems.length) {
+  <span>No results</span>
   }
 </mat-nav-list>
