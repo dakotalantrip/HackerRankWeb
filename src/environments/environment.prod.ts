@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   apiUrl:
-    'https://hackerranknews-ckggbnbydganethq.canadacentral-01.azurewebsites.net/',
+    'https://hackerrankapi-a4eaaxatfebpenb8.canadacentral-01.azurewebsites.net/',
 };
