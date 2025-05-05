@@ -1,0 +1,13 @@
+@use "abstracts/mixins";
+@use "abstracts/variables";
+
+:host {
+  @include mixins.flex-container(column);
+  overflow: hidden;
+  padding: 0 variables.$spacing variables.$spacing;
+
+  mat-nav-list {
+    @include mixins.block-container;
+    overflow-y: auto;
+  }
+}

@@ -1,0 +1,19 @@
+@use "abstracts/mixins";
+@use "abstracts/variables";
+
+:host {
+  @include mixins.flex-container(column);
+  overflow: hidden;
+  padding: 0 variables.$spacing variables.$spacing;
+
+  mat-table {
+    @include mixins.flex-container(column);
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: 90%;
+  }
+
+  .mat-column-title {
+    flex-grow: 5;
+  }
+}

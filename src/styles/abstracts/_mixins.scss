@@ -1,0 +1,12 @@
+@mixin block-container() {
+  display: block;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+@mixin flex-container($flex-direction: row) {
+  display: flex;
+  flex-direction: $flex-direction;
+  height: 100%;
+  box-sizing: border-box;
+}

@@ -1,0 +1,32 @@
+<mat-sidenav-container [hasBackdrop]="false">
+  <mat-sidenav #sidenav mode="side" opened>
+    <div class="sidenav-buttons">
+      <h2>Hacker Rank News</h2>
+      <button mat-fab extended routerLink="/client-pagination">
+        <mat-icon>devices</mat-icon>
+        Client Pagination
+      </button>
+      <button mat-fab extended routerLink="/server-pagination">
+        <mat-icon>dns</mat-icon>
+        Server Pagination
+      </button>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    @if (isLoading) {
+    <div class="progress-spinner-container">
+      <mat-progress-spinner mode="indeterminate" />
+    </div>
+    }
+    <router-outlet />
+    <button
+      mat-mini-fab
+      class="sidenav-toggle"
+      (click)="sidenav.toggle()"
+      aria-label="Menu toggle"
+      title="Sidenav toggle"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  </mat-sidenav-content>
+</mat-sidenav-container>
