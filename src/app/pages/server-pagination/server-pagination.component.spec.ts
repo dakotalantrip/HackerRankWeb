@@ -7,8 +7,8 @@ import { of } from 'rxjs';
 
 import { ServerPaginationComponent } from './server-pagination.component';
 import { HackerRankItem } from '../../models/hacker-rank-item.model';
-import { SearchService } from '../../services/search.service';
 import { PaginatedResult } from '../../models/paginated-result.model';
+import { HackerRankService } from '../../services/hacker-rank.service';
 
 describe('ServerPaginationComponent', () => {
   let component: ServerPaginationComponent;
@@ -28,7 +28,7 @@ describe('ServerPaginationComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        SearchService,
+        HackerRankService,
         {
           provide: ActivatedRoute,
           useValue: {
@@ -62,9 +62,8 @@ describe('ServerPaginationComponent', () => {
     expect(component.hackerRankItems).toEqual(mockData.items);
   });
 
-  it('should begin with current page equal to 1 and increment current page when onScroll() is called', () => {
+  it('should increment current page when onScroll() is called', () => {
     const currentPage: number = component.currentPage;
-    expect(currentPage).toEqual(1);
 
     component.onScroll();
 

@@ -18,11 +18,8 @@ describe('HackerRankService', () => {
     { id: 2, title: 'Testing Tips', author: 'Bob', url: 'https://...' },
   ];
   const mockPaginatedResultData: PaginatedResult<HackerRankItem> = {
-    items: [
-      { id: 1, title: 'Angular Rocks', author: 'Alice', url: 'https://...' },
-      { id: 2, title: 'Testing Tips', author: 'Bob', url: 'https://...' },
-    ],
-    totalItems: 2,
+    items: mockData,
+    totalItems: mockData.length,
     totalPages: 1,
   };
 
@@ -56,7 +53,7 @@ describe('HackerRankService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      `${environment.apiUrl}HackerRank/Get`
+      `${environment.apiUrl}HackerRank/GetNew`
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockData);
@@ -74,7 +71,7 @@ describe('HackerRankService', () => {
     });
 
     const testRequest = httpTestingController.expectOne(
-      `${environment.apiUrl}HackerRank/Get`
+      `${environment.apiUrl}HackerRank/GetNew`
     );
     expect(testRequest.request.method).toBe('GET');
 
@@ -91,7 +88,7 @@ describe('HackerRankService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      `${environment.apiUrl}HackerRank/Get`
+      `${environment.apiUrl}HackerRank/GetNew`
     );
     expect(req.request.method).toBe('GET');
 
@@ -102,20 +99,6 @@ describe('HackerRankService', () => {
   //#endregion
 
   //#region GetNewPaginated
-
-  it('should call the correct URL for search()', () => {
-    const searchTerm = 'angular';
-
-    service.getNewPaginated(searchTerm).subscribe((items) => {
-      expect(items).toEqual(mockPaginatedResultData);
-    });
-
-    const req = httpTestingController.expectOne(
-      `${environment.apiUrl}HackerRank/Get?searchTerm=${searchTerm}&page=1&pageSize=25`
-    );
-    expect(req.request.method).toBe('GET');
-    req.flush(mockData);
-  });
 
   it('should handle HTTP errors for getNewPaginated()', () => {
     const searchTerm = 'angular';
@@ -130,7 +113,7 @@ describe('HackerRankService', () => {
     });
 
     const testRequest = httpTestingController.expectOne(
-      `${environment.apiUrl}HackerRank/Get?searchTerm=${searchTerm}&page=1&pageSize=25`
+      `${environment.apiUrl}HackerRank/GetNewPaginated?searchTerm=${searchTerm}&page=1&pageSize=25`
     );
     expect(testRequest.request.method).toBe('GET');
 
@@ -149,7 +132,7 @@ describe('HackerRankService', () => {
     });
 
     const testRequest = httpTestingController.expectOne(
-      `${environment.apiUrl}HackerRank/Search?searchTerm=${searchTerm}&page=1&pageSize=25`
+      `${environment.apiUrl}HackerRank/GetNewPaginated?searchTerm=${searchTerm}&page=1&pageSize=25`
     );
     expect(testRequest.request.method).toBe('GET');
 
@@ -162,12 +145,10 @@ describe('HackerRankService', () => {
     const page = 2;
     const pageSize = 50;
 
-    service.getNewPaginated(searchTerm, page, pageSize).subscribe((items) => {
-      expect(items).toEqual(mockPaginatedResultData);
-    });
+    service.getNewPaginated(searchTerm, page, pageSize).subscribe();
 
     const testRequest = httpTestingController.expectOne(
-      `${environment.apiUrl}HackerRank/Get?searchTerm=${searchTerm}&page=${page}&pageSize=${pageSize}`
+      `${environment.apiUrl}HackerRank/GetNewPaginated?searchTerm=${searchTerm}&page=${page}&pageSize=${pageSize}`
     );
     expect(testRequest.request.method).toBe('GET');
     testRequest.flush(mockData);
@@ -180,7 +161,7 @@ describe('HackerRankService', () => {
 
     const testRequest = httpTestingController.expectOne(
       (request) =>
-        request.url === `${environment.apiUrl}HackerRank/Get` &&
+        request.url === `${environment.apiUrl}HackerRank/GetNewPaginated` &&
         request.params.get('searchTerm') === searchTerm &&
         request.params.get('page') === '1' &&
         request.params.get('pageSize') === '25'

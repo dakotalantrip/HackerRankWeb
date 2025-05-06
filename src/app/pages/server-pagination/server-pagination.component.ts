@@ -1,6 +1,15 @@
-import { Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatListModule } from '@angular/material/list';
+import { MatListModule, MatNavList } from '@angular/material/list';
 import {
   BehaviorSubject,
   debounceTime,
@@ -26,7 +35,11 @@ import { SearchBarComponent } from '../../components/search-bar/search-bar.compo
   templateUrl: './server-pagination.component.html',
   styleUrl: './server-pagination.component.scss',
 })
-export class ServerPaginationComponent implements OnInit, OnDestroy {
+export class ServerPaginationComponent
+  implements AfterViewInit, OnInit, OnDestroy
+{
+  @ViewChild(MatNavList, { read: ElementRef }) matNavList!: ElementRef;
+
   public hackerRankItems: HackerRankItem[] = [];
   public paginatedResultSignal = signal<PaginatedResult<HackerRankItem>>({
     items: [],
@@ -41,6 +54,7 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
 
   constructor(
+    private elementRef: ElementRef,
     private route: ActivatedRoute,
     private hackerRankService: HackerRankService
   ) {
@@ -82,6 +96,15 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
         )
         .subscribe()
     );
+  }
+
+  ngAfterViewInit(): void {
+    if (
+      this.elementRef.nativeElement.scrollHeight >=
+      this.matNavList.nativeElement.scrollHeight
+    ) {
+      this.onScroll();
+    }
   }
 
   ngOnDestroy(): void {
