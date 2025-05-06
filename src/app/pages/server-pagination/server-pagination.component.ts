@@ -61,8 +61,8 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.searchTermSubject
         .pipe(
-          debounceTime(500),
           distinctUntilChanged(),
+          debounceTime(500),
           tap((value: string) => {
             this.searchTerm = value;
             this.hackerRankItems = [];
@@ -114,6 +114,7 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
   }
 
   public onSearch(searchTerm: string): void {
+    this.currentPageSubject.next(1);
     this.searchTermSubject.next(searchTerm);
   }
 
