@@ -10,7 +10,7 @@ export class HackerRankNewsResolver implements Resolve<HackerRankItem[]> {
   constructor(private hackerRankService: HackerRankService) {}
 
   resolve(): Observable<HackerRankItem[]> {
-    return this.hackerRankService.getNewWithUrl().pipe(
+    return this.hackerRankService.getNew().pipe(
       catchError(() => {
         return EMPTY;
       })

@@ -36,26 +36,24 @@ describe('HackerRankNewsResolver', () => {
   });
 
   it('should call getNew() and return data when successful', (done) => {
-    hackerRankService.getNewWithUrl.and.returnValue(of(mockData));
+    hackerRankService.get.and.returnValue(of(mockData));
 
     resolver.resolve().subscribe((result) => {
       expect(result).toEqual(mockData);
-      expect(hackerRankService.getNewWithUrl).toHaveBeenCalled();
+      expect(hackerRankService.get).toHaveBeenCalled();
       done();
     });
   });
 
   it('should return EMPTY when getNew() throws an error', (done) => {
-    hackerRankService.getNewWithUrl.and.returnValue(
-      throwError(() => new Error('Error'))
-    );
+    hackerRankService.get.and.returnValue(throwError(() => new Error('Error')));
 
     resolver.resolve().subscribe({
       next: (result) => {
         expect(result).toEqual([]);
       },
       complete: () => {
-        expect(hackerRankService.getNewWithUrl).toHaveBeenCalled();
+        expect(hackerRankService.get).toHaveBeenCalled();
         done(); // Ensure the test completes
       },
     });

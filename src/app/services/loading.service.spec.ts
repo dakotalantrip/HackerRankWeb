@@ -25,7 +25,7 @@ describe('LoadingService', () => {
     service.show();
   });
 
-  it('should emit true and then false when show() and hide() are called sequentially', (done) => {
+  it('should emit true, then false, when show() and hide() are called toggled', (done) => {
     const emittedValues: boolean[] = [];
 
     service.loading$.subscribe((isLoading) => {

@@ -3,12 +3,12 @@ import { of, throwError } from 'rxjs';
 
 import { HackerRankItem } from '../models/hacker-rank-item.model';
 import { HackerRankNewsPaginatedResolver } from './hacker-rank-news-paginated.resolver';
+import { HackerRankService } from '../services/hacker-rank.service';
 import { PaginatedResult } from '../models/paginated-result.model';
-import { SearchService } from '../services/search.service';
 
 describe('HackerRankNewsPaginatedResolver', () => {
   let resolver: HackerRankNewsPaginatedResolver;
-  let searchService: jasmine.SpyObj<SearchService>;
+  let hackerRankService: jasmine.SpyObj<HackerRankService>;
   const mockData: PaginatedResult<HackerRankItem> = {
     items: [
       { id: 1, title: 'Angular Rocks', author: 'Alice', url: 'https://...' },
@@ -19,44 +19,48 @@ describe('HackerRankNewsPaginatedResolver', () => {
   };
 
   beforeEach(() => {
-    const searchServiceSpy = jasmine.createSpyObj('SearchService', ['search']);
+    const hackerRankServiceSpy = jasmine.createSpyObj('HackerRankService', [
+      'getNewPaginated',
+    ]);
 
     TestBed.configureTestingModule({
       providers: [
         HackerRankNewsPaginatedResolver,
-        { provide: SearchService, useValue: searchServiceSpy },
+        { provide: HackerRankService, useValue: hackerRankServiceSpy },
       ],
     });
 
     resolver = TestBed.inject(HackerRankNewsPaginatedResolver);
-    searchService = TestBed.inject(
-      SearchService
-    ) as jasmine.SpyObj<SearchService>;
+    hackerRankService = TestBed.inject(
+      HackerRankService
+    ) as jasmine.SpyObj<HackerRankService>;
   });
 
   it('should be created', () => {
     expect(resolver).toBeTruthy();
   });
 
-  it('should call search() and return data when successful', (done) => {
-    searchService.search.and.returnValue(of(mockData));
+  it('should call getNewPaginated() and return data when successful', (done) => {
+    hackerRankService.getNewPaginated.and.returnValue(of(mockData));
 
     resolver.resolve().subscribe((result) => {
       expect(result).toEqual(mockData);
-      expect(searchService.search).toHaveBeenCalled();
+      expect(hackerRankService.getNewPaginated).toHaveBeenCalled();
       done();
     });
   });
 
-  it('should return EMPTY when search throws an error', (done) => {
-    searchService.search.and.returnValue(throwError(() => new Error('Error')));
+  it('should return EMPTY when getNewPaginated() throws an error', (done) => {
+    hackerRankService.getNewPaginated.and.returnValue(
+      throwError(() => new Error('Error'))
+    );
 
     resolver.resolve().subscribe({
       next: (result) => {
         expect(result).toEqual({ items: [], totalItems: 0, totalPages: 0 });
       },
       complete: () => {
-        expect(searchService.search).toHaveBeenCalled();
+        expect(hackerRankService.getNewPaginated).toHaveBeenCalled();
         done(); // Ensure the test completes
       },
     });

@@ -6,6 +6,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   Observable,
+  skip,
   Subject,
   Subscription,
   switchMap,
@@ -15,9 +16,9 @@ import {
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
 import { HackerRankItem } from '../../models/hacker-rank-item.model';
+import { HackerRankService } from '../../services/hacker-rank.service';
 import { PaginatedResult } from '../../models/paginated-result.model';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
-import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-server-pagination',
@@ -41,7 +42,7 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private searchService: SearchService
+    private hackerRankService: HackerRankService
   ) {
     const routeData = (this.route.snapshot?.data[
       'hackerRankItems'
@@ -75,8 +76,9 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
       this.currentPageSubject
         .asObservable()
         .pipe(
+          skip(1),
           distinctUntilChanged(),
-          switchMap((value: number) => this.search(this.searchTerm))
+          switchMap(() => this.search(this.searchTerm))
         )
         .subscribe()
     );
@@ -120,8 +122,8 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
   private search(
     searchTerm: string
   ): Observable<PaginatedResult<HackerRankItem>> {
-    return this.searchService
-      .search(searchTerm, this.currentPage)
+    return this.hackerRankService
+      .getNewPaginated(searchTerm, this.currentPage)
       .pipe(
         tap((value: PaginatedResult<HackerRankItem>) =>
           this.paginatedResultSignal.set(value)
