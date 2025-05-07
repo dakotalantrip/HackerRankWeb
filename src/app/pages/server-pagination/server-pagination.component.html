@@ -1,24 +1,28 @@
+<!--Title-->
 <h2>Server pagination</h2>
 
+<!--Search-->
 <app-search-bar
-  [currentItemCount]="hackerRankItems.length"
-  [totalItemCount]="paginatedResult.totalItems"
-  (search)="onSearch($event)"
-/>
+    [currentItemCount]="hackerRankItems.length"
+    [totalItemCount]="paginatedResult.totalItems"
+    (search)="onSearch($event)" />
 
+<!--Nav List-->
 <mat-nav-list
-  infiniteScroll
-  [scrollWindow]="false"
-  [fromRoot]="false"
-  [infiniteScrollDistance]="2"
-  [infiniteScrollThrottle]="50"
-  (scrolled)="onScroll()"
->
-  @for (hackerRankItem of hackerRankItems; track hackerRankItem) {
-  <a mat-list-item [href]="hackerRankItem.url"
-    >{{ hackerRankItem.title }} - {{ hackerRankItem.author }}</a
-  >
-  } @if (!hackerRankItems.length) {
-  <span>No results</span>
-  }
+    infiniteScroll
+    [scrollWindow]="false"
+    [fromRoot]="false"
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll()">
+    @for (hackerRankItem of hackerRankItems; track hackerRankItem) {
+        <a
+            mat-list-item
+            [href]="hackerRankItem.url"
+            >{{ hackerRankItem.title }} - {{ hackerRankItem.author }}</a
+        >
+    }
+    @if (!hackerRankItems.length) {
+        <span>No results</span>
+    }
 </mat-nav-list>

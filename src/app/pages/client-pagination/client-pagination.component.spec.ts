@@ -2,25 +2,11 @@ import { ActivatedRoute } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ClientPaginationComponent } from './client-pagination.component';
-import { HackerRankItem } from '../../models/hacker-rank-item.model';
+import { mockHackerRankItemList } from '../../testing/test-data';
 
 describe('ClientPaginationComponent', () => {
   let component: ClientPaginationComponent;
   let fixture: ComponentFixture<ClientPaginationComponent>;
-  const data: HackerRankItem[] = [
-    {
-      id: 1,
-      title: 'Item 1',
-      author: 'Author 1',
-      url: 'https://www.example.com',
-    },
-    {
-      id: 2,
-      title: 'Item 2',
-      author: 'Author 2',
-      url: 'https://www.example.com',
-    },
-  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -31,7 +17,7 @@ describe('ClientPaginationComponent', () => {
           useValue: {
             snapshot: {
               data: {
-                hackerRankItems: data,
+                hackerRankItems: mockHackerRankItemList,
               },
               paramMap: {
                 get: (key: string) => (key === 'id' ? '123' : null),
@@ -55,14 +41,14 @@ describe('ClientPaginationComponent', () => {
   });
 
   it('should contain appropriate field names for the displayed columns', () => {
-    const hackerRankItemKeys = Object.keys(data[0]);
+    const hackerRankItemKeys = Object.keys(mockHackerRankItemList[0]);
     component.displayedColumns.forEach((column) => {
       expect(hackerRankItemKeys).toContain(column);
     });
   });
 
   it('should load data from resolver', () => {
-    expect(component.dataSource.data).toEqual(data);
+    expect(component.dataSource.data).toEqual(mockHackerRankItemList);
   });
 
   it('should filter the dataSource when onSearch() is called', () => {

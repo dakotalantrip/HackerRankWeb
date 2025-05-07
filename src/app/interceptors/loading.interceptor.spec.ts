@@ -31,7 +31,7 @@ describe('LoadingInterceptor', () => {
     mockHandler = handlerSpy;
   });
 
-  it('should call show() and hide() on LoadingService', () => {
+  it('should call show() and hide() on LoadingService when request is intercepted', () => {
     const mockRequest = {} as HttpRequest<any>;
     const mockEvent = {} as HttpEvent<any>;
 

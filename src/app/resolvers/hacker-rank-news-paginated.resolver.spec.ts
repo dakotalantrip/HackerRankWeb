@@ -50,7 +50,7 @@ describe('HackerRankNewsPaginatedResolver', () => {
     });
   });
 
-  it('should return EMPTY when getNewPaginated() throws an error', (done) => {
+  it('should return a PaginatedResult object with no items when getNewPaginated() throws an error', (done) => {
     hackerRankService.getNewPaginated.and.returnValue(
       throwError(() => new Error('Error'))
     );

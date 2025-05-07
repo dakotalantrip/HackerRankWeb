@@ -46,7 +46,7 @@ describe('HackerRankNewsResolver', () => {
     });
   });
 
-  it('should return EMPTY when getNew() throws an error', (done) => {
+  it('should return an empty array when getNew() throws an error', (done) => {
     hackerRankService.getNew.and.returnValue(
       throwError(() => new Error('Error'))
     );
@@ -57,7 +57,7 @@ describe('HackerRankNewsResolver', () => {
       },
       complete: () => {
         expect(hackerRankService.getNew).toHaveBeenCalled();
-        done(); // Ensure the test completes
+        done();
       },
     });
   });

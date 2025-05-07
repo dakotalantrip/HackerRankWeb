@@ -19,7 +19,7 @@ export class HackerRankService extends APIBaseService {
   }
 
   public getNewPaginated(
-    searchTerm: string,
+    searchTerm: string = '',
     page: number = 1,
     pageSize: number = 25
   ): Observable<PaginatedResult<HackerRankItem>> {
@@ -27,9 +27,6 @@ export class HackerRankService extends APIBaseService {
       .set('searchTerm', searchTerm)
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
-    return this.getWithParams<PaginatedResult<HackerRankItem>>(
-      `GetNewPaginated`,
-      params
-    );
+    return this.getWithParams<PaginatedResult<HackerRankItem>>(`GetNewPaginated`, params);
   }
 }

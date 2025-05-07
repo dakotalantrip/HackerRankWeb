@@ -6,22 +6,12 @@ import {
 import { provideHttpClient } from '@angular/common/http';
 
 import { HackerRankService } from './hacker-rank.service';
-import { HackerRankItem } from '../models/hacker-rank-item.model';
 import { environment } from '../../environments/environment';
-import { PaginatedResult } from '../models/paginated-result.model';
+import { mockHackerRankItemList } from '../testing/test-data';
 
 describe('HackerRankService', () => {
   let service: HackerRankService;
   let httpTestingController: HttpTestingController;
-  const mockData: HackerRankItem[] = [
-    { id: 1, title: 'Angular Rocks', author: 'Alice', url: 'https://...' },
-    { id: 2, title: 'Testing Tips', author: 'Bob', url: 'https://...' },
-  ];
-  const mockPaginatedResultData: PaginatedResult<HackerRankItem> = {
-    items: mockData,
-    totalItems: mockData.length,
-    totalPages: 1,
-  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -49,14 +39,14 @@ describe('HackerRankService', () => {
 
   it('should call the correct URL for getNew()', () => {
     service.getNew().subscribe((data) => {
-      expect(data).toEqual(mockData);
+      expect(data).toEqual(mockHackerRankItemList);
     });
 
     const req = httpTestingController.expectOne(
       `${environment.apiUrl}HackerRank/GetNew`
     );
     expect(req.request.method).toBe('GET');
-    req.flush(mockData);
+    req.flush(mockHackerRankItemList);
   });
 
   it('should handle HTTP errors for getNew()', () => {
@@ -151,7 +141,7 @@ describe('HackerRankService', () => {
       `${environment.apiUrl}HackerRank/GetNewPaginated?searchTerm=${searchTerm}&page=${page}&pageSize=${pageSize}`
     );
     expect(testRequest.request.method).toBe('GET');
-    testRequest.flush(mockData);
+    testRequest.flush(mockHackerRankItemList);
   });
 
   it('should include query parameters in the request from getNewPaginated()', () => {
@@ -168,7 +158,7 @@ describe('HackerRankService', () => {
     );
 
     expect(testRequest).toBeTruthy();
-    testRequest.flush(mockData);
+    testRequest.flush(mockHackerRankItemList);
   });
 
   //#endregion

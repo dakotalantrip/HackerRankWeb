@@ -1,12 +1,13 @@
-import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import { ActivatedRoute } from '@angular/router';
 import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { HackerRankService } from './services/hacker-rank.service';
-import { ActivatedRoute } from '@angular/router';
+import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+
+import { AppComponent } from './app.component';
+import { HackerRankService } from './services/hacker-rank.service';
 
 describe('AppComponent', () => {
   let httpTestingController: HttpTestingController;
@@ -17,10 +18,10 @@ describe('AppComponent', () => {
         provideHttpClientTesting(),
         HackerRankService,
         {
-          provide: ActivatedRoute, // Provide a mock ActivatedRoute
+          provide: ActivatedRoute,
           useValue: {
-            params: of({ id: '123' }), // Mock route parameters
-            queryParams: of({ search: 'test' }), // Mock query parameters
+            params: of({ id: '123' }),
+            queryParams: of({ search: 'test' }),
             snapshot: {
               paramMap: {
                 get: (key: string) => (key === 'id' ? '123' : null),

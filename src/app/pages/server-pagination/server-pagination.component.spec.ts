@@ -5,22 +5,13 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 
-import { ServerPaginationComponent } from './server-pagination.component';
-import { HackerRankItem } from '../../models/hacker-rank-item.model';
-import { PaginatedResult } from '../../models/paginated-result.model';
 import { HackerRankService } from '../../services/hacker-rank.service';
+import { mockPaginatedResult } from '../../testing/test-data';
+import { ServerPaginationComponent } from './server-pagination.component';
 
 describe('ServerPaginationComponent', () => {
   let component: ServerPaginationComponent;
   let fixture: ComponentFixture<ServerPaginationComponent>;
-  const mockData: PaginatedResult<HackerRankItem> = {
-    items: [
-      { id: 1, title: 'Angular Rocks', author: 'Alice', url: 'https://...' },
-      { id: 2, title: 'Testing Tips', author: 'Bob', url: 'https://...' },
-    ],
-    totalItems: 2,
-    totalPages: 1,
-  };
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
@@ -34,7 +25,7 @@ describe('ServerPaginationComponent', () => {
           useValue: {
             snapshot: {
               data: {
-                hackerRankItems: mockData,
+                hackerRankItems: mockPaginatedResult,
               },
               paramMap: {
                 get: (key: string) => (key === 'id' ? '123' : null),
@@ -58,8 +49,8 @@ describe('ServerPaginationComponent', () => {
   });
 
   it('should load data from resolver', () => {
-    expect(component.paginatedResult).toEqual(mockData);
-    expect(component.hackerRankItems).toEqual(mockData.items);
+    expect(component.paginatedResult).toEqual(mockPaginatedResult);
+    expect(component.hackerRankItems).toEqual(mockPaginatedResult.items);
   });
 
   it('should increment current page when onScroll() is called', () => {
@@ -72,7 +63,7 @@ describe('ServerPaginationComponent', () => {
 
   it('should call search() with the correct searchTerm when currentPage is incremented', () => {
     const searchSpy = spyOn<any>(component, 'search').and.returnValue(
-      of(mockData)
+      of(mockPaginatedResult)
     );
 
     component.onScroll();
@@ -102,14 +93,14 @@ describe('ServerPaginationComponent', () => {
   });
 
   it('should render list of items', () => {
-    component.paginatedResultSignal.set(mockData);
+    component.paginatedResultSignal.set(mockPaginatedResult);
     fixture.detectChanges();
 
-    const mockDataItem = mockData.items[0];
+    const mockDataItem = mockPaginatedResult.items[0];
     const listItems = fixture.debugElement.queryAll(
       By.css('a.mat-mdc-list-item')
     );
-    expect(listItems.length).toBe(mockData.items.length);
+    expect(listItems.length).toBe(mockPaginatedResult.items.length);
     expect(listItems[0].nativeElement.textContent).toContain(
       `${mockDataItem.title} - ${mockDataItem.author}`
     );

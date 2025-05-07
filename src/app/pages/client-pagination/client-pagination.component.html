@@ -1,33 +1,50 @@
+<!--Title-->
 <h2>Client pagination</h2>
+
+<!--Search-->
 <app-search-bar (search)="onSearch($event)" />
-<mat-table matSort [dataSource]="dataSource">
-  <!-- Title Column -->
-  <ng-container matColumnDef="title">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{ element.title }}</mat-cell>
-  </ng-container>
 
-  <!-- Author Column -->
-  <ng-container matColumnDef="author">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Author</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{ element.author }}</mat-cell>
-  </ng-container>
+<!--Table-->
+<mat-table
+    matSort
+    [dataSource]="dataSource">
+    <!-- Title Column -->
+    <ng-container matColumnDef="title">
+        <mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            >Title</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.title }}</mat-cell>
+    </ng-container>
 
-  <!-- URL Column -->
-  <ng-container matColumnDef="url">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>URL</mat-header-cell>
-    <mat-cell *matCellDef="let element"
-      ><a [href]="element.url"><mat-icon>open_in_new</mat-icon></a></mat-cell
-    >
-  </ng-container>
+    <!-- Author Column -->
+    <ng-container matColumnDef="author">
+        <mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            >Author</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.author }}</mat-cell>
+    </ng-container>
 
-  <mat-header-row
-    *matHeaderRowDef="displayedColumns; sticky: true"
-  ></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    <!-- URL Column -->
+    <ng-container matColumnDef="url">
+        <mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            >URL</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element"
+            ><a [href]="element.url"><mat-icon>open_in_new</mat-icon></a></mat-cell
+        >
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 </mat-table>
 
+<!--Paginator-->
 <mat-paginator
-  [pageSizeOptions]="[5, 10, 50]"
-  aria-label="Select Hacker Rank item"
-/>
+    [pageSizeOptions]="[5, 10, 50]"
+    aria-label="Select Hacker Rank item" />

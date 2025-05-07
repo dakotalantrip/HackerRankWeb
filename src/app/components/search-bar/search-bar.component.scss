@@ -1,15 +1,15 @@
+@use "abstracts/mixins";
 @use "abstracts/variables";
 
 :host {
-  display: flex;
-  align-items: baseline;
-  column-gap: variables.$spacing;
+    @include mixins.flexbox(row, baseline);
+    column-gap: variables.$spacing;
 
-  .result-count {
-    height: variables.$spacing;
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: calc(#{variables.$spacing} * 0.5);
-    margin-left: auto;
-  }
+    .result-count {
+        height: variables.$spacing;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: calc(#{variables.$spacing} * 0.5);
+        margin-left: auto;
+    }
 }

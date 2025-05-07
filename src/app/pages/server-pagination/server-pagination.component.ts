@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  effect,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatListModule, MatNavList } from '@angular/material/list';
 import {
@@ -35,9 +26,7 @@ import { SearchBarComponent } from '../../components/search-bar/search-bar.compo
   templateUrl: './server-pagination.component.html',
   styleUrl: './server-pagination.component.scss',
 })
-export class ServerPaginationComponent
-  implements AfterViewInit, OnInit, OnDestroy
-{
+export class ServerPaginationComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild(MatNavList, { read: ElementRef }) matNavList!: ElementRef;
 
   public hackerRankItems: HackerRankItem[] = [];
@@ -48,19 +37,16 @@ export class ServerPaginationComponent
   });
   public searchTerm: string = '';
 
-  private currentPageSubject: BehaviorSubject<number> =
-    new BehaviorSubject<number>(1);
+  private currentPageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   private searchTermSubject: Subject<string> = new Subject<string>();
   private subscription: Subscription = new Subscription();
 
   constructor(
     private elementRef: ElementRef,
-    private route: ActivatedRoute,
-    private hackerRankService: HackerRankService
+    private hackerRankService: HackerRankService,
+    private route: ActivatedRoute
   ) {
-    const routeData = (this.route.snapshot?.data[
-      'hackerRankItems'
-    ] as PaginatedResult<HackerRankItem>) ?? {
+    const routeData = (this.route.snapshot?.data['hackerRankItems'] as PaginatedResult<HackerRankItem>) ?? {
       items: [],
       totalItems: 0,
       totalPages: 0,
@@ -99,10 +85,7 @@ export class ServerPaginationComponent
   }
 
   ngAfterViewInit(): void {
-    if (
-      this.elementRef.nativeElement.scrollHeight >=
-      this.matNavList.nativeElement.scrollHeight
-    ) {
+    if (this.elementRef.nativeElement.scrollHeight >= this.matNavList.nativeElement.scrollHeight) {
       this.onScroll();
     }
   }
@@ -143,15 +126,9 @@ export class ServerPaginationComponent
 
   //#endregion
 
-  private search(
-    searchTerm: string
-  ): Observable<PaginatedResult<HackerRankItem>> {
+  private search(searchTerm: string): Observable<PaginatedResult<HackerRankItem>> {
     return this.hackerRankService
       .getNewPaginated(searchTerm, this.currentPage)
-      .pipe(
-        tap((value: PaginatedResult<HackerRankItem>) =>
-          this.paginatedResultSignal.set(value)
-        )
-      );
+      .pipe(tap((value: PaginatedResult<HackerRankItem>) => this.paginatedResultSignal.set(value)));
   }
 }

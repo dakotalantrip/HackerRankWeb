@@ -1,6 +1,6 @@
 import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { catchError, EMPTY, Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 
 import { HackerRankItem } from '../models/hacker-rank-item.model';
 import { HackerRankService } from '../services/hacker-rank.service';
@@ -12,7 +12,7 @@ export class HackerRankNewsResolver implements Resolve<HackerRankItem[]> {
   resolve(): Observable<HackerRankItem[]> {
     return this.hackerRankService.getNew().pipe(
       catchError(() => {
-        return EMPTY;
+        return of([]);
       })
     );
   }
