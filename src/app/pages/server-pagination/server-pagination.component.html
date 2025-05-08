@@ -12,11 +12,12 @@
     infiniteScroll
     [scrollWindow]="false"
     [fromRoot]="false"
-    [infiniteScrollDistance]="2"
+    [infiniteScrollDistance]="1.5"
     [infiniteScrollThrottle]="50"
     (scrolled)="onScroll()">
     @for (hackerRankItem of hackerRankItems; track hackerRankItem) {
         <a
+            #listItem
             mat-list-item
             [href]="hackerRankItem.url"
             >{{ hackerRankItem.title }} - {{ hackerRankItem.author }}</a

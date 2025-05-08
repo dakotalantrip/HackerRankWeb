@@ -1,13 +1,13 @@
-import { AfterViewInit, Component, effect, ElementRef, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, OnDestroy, OnInit, signal, ViewChild, viewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatListModule, MatNavList } from '@angular/material/list';
 import {
   BehaviorSubject,
+  combineLatest,
   debounceTime,
   distinctUntilChanged,
   Observable,
   skip,
-  Subject,
   Subscription,
   switchMap,
   tap,
@@ -26,19 +26,19 @@ import { SearchBarComponent } from '../../components/search-bar/search-bar.compo
   templateUrl: './server-pagination.component.html',
   styleUrl: './server-pagination.component.scss',
 })
-export class ServerPaginationComponent implements AfterViewInit, OnInit, OnDestroy {
+export class ServerPaginationComponent implements OnInit, OnDestroy {
   @ViewChild(MatNavList, { read: ElementRef }) matNavList!: ElementRef;
 
   public hackerRankItems: HackerRankItem[] = [];
+  public listItemsSignal = viewChildren<ElementRef>('listItem');
   public paginatedResultSignal = signal<PaginatedResult<HackerRankItem>>({
     items: [],
     totalItems: 0,
     totalPages: 0,
   });
-  public searchTerm: string = '';
 
   private currentPageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(1);
-  private searchTermSubject: Subject<string> = new Subject<string>();
+  private searchTermSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private subscription: Subscription = new Subscription();
 
   constructor(
@@ -58,36 +58,32 @@ export class ServerPaginationComponent implements AfterViewInit, OnInit, OnDestr
   //#region Lifecycle
 
   ngOnInit(): void {
-    this.subscription.add(
-      this.searchTermSubject
+    const searchTerm$ = this.searchTermSubject
         .pipe(
           distinctUntilChanged(),
           debounceTime(500),
-          tap((value: string) => {
-            this.searchTerm = value;
-            this.hackerRankItems = [];
-          }),
-          switchMap((value: string) => this.search(value))
-        )
-        .subscribe()
-    );
+          tap(() => {
+            this.currentPageSubject.next(1);
+          })
+        );
 
-    this.subscription.add(
-      this.currentPageSubject
+    const currentPage$ = this.currentPageSubject
         .asObservable()
         .pipe(
-          skip(1),
           distinctUntilChanged(),
-          switchMap(() => this.search(this.searchTerm))
+        );
+
+      this.subscription.add(
+        combineLatest([searchTerm$, currentPage$])
+        .pipe(
+          skip(1),
+          debounceTime(100),
+          switchMap(([searchTerm, currentPage]) => {
+            return this.search(searchTerm);
+          })
         )
         .subscribe()
-    );
-  }
-
-  ngAfterViewInit(): void {
-    if (this.elementRef.nativeElement.scrollHeight >= this.matNavList.nativeElement.scrollHeight) {
-      this.onScroll();
-    }
+      );
   }
 
   ngOnDestroy(): void {
@@ -110,17 +106,27 @@ export class ServerPaginationComponent implements AfterViewInit, OnInit, OnDestr
 
   //#region Events
 
+  public onListItemChanges = effect(() => {
+    const listItems = this.listItemsSignal();
+    setTimeout(() => {
+      if (this.elementRef?.nativeElement.scrollHeight >= this.matNavList?.nativeElement.scrollHeight) {
+        this.onScroll();
+      }
+    }, 0);
+  });
+
   public onPaginatedResult = effect(() => {
     const paginatedResult = this.paginatedResultSignal();
-    this.hackerRankItems = this.hackerRankItems.concat(paginatedResult.items);
+    this.hackerRankItems = this.currentPage === 1 ? paginatedResult.items : this.hackerRankItems.concat(paginatedResult.items);
   });
 
   public onScroll(): void {
-    this.currentPageSubject.next(this.currentPage + 1);
+    if (this.paginatedResult.totalPages > this.currentPage) {
+      this.currentPageSubject.next(this.currentPage + 1);
+    }
   }
 
   public onSearch(searchTerm: string): void {
-    this.currentPageSubject.next(1);
     this.searchTermSubject.next(searchTerm);
   }
 
