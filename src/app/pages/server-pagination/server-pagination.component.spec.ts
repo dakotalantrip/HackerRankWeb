@@ -3,8 +3,8 @@ import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { of } from 'rxjs';
 
+import { createPaginatedResult } from '../../testing/test-data.factory';
 import { HackerRankService } from '../../services/hacker-rank.service';
 import { mockPaginatedResult } from '../../testing/test-data';
 import { ServerPaginationComponent } from './server-pagination.component';
@@ -53,23 +53,35 @@ describe('ServerPaginationComponent', () => {
     expect(component.hackerRankItems).toEqual(mockPaginatedResult.items);
   });
 
-  it('should increment current page when onScroll() is called', () => {
-    const currentPage: number = component.currentPage;
+  it('should increment current page when onScroll() is called and totalPages > currentPage', () => {
+    component.paginatedResultSignal.set(createPaginatedResult([], 0, component.currentPage + 1));
+    const currentPage = component.currentPage;
+    expect(component.currentPage).toEqual(1);
 
     component.onScroll();
 
     expect(component.currentPage).toEqual(currentPage + 1);
   });
 
-  it('should call search() with the correct searchTerm when currentPage is incremented', () => {
-    const searchSpy = spyOn<any>(component, 'search').and.returnValue(
-      of(mockPaginatedResult)
-    );
+  it('should not increment current page when onScroll() is called and totalPages <= currentPage', () => {
+    component.paginatedResultSignal.set(createPaginatedResult([], 0, 1));
+    const currentPage = component.currentPage;
 
     component.onScroll();
-    fixture.detectChanges();
 
-    expect(searchSpy).toHaveBeenCalledWith(component.searchTerm);
+    expect(component.currentPage).toEqual(1);
+  });
+
+  it('should reset currentPage to 1 when the search event is emitted from the search bar', () => {
+        spyOn(component, 'onSearch');
+    const searchTerm = 'Item 1';
+    const searchBar = fixture.debugElement.query(
+      By.css('app-search-bar')
+    ).componentInstance;
+
+    searchBar.search.emit(searchTerm);
+
+    expect(component.currentPage).toEqual(1);
   });
 
   it('should call onSearch() when the search event is emitted from the search bar', () => {
@@ -92,7 +104,7 @@ describe('ServerPaginationComponent', () => {
     expect(component.onScroll).toHaveBeenCalled();
   });
 
-  it('should render list of items', () => {
+  it('should render a list of mat-nav-list items', () => { 
     component.paginatedResultSignal.set(mockPaginatedResult);
     fixture.detectChanges();
 
