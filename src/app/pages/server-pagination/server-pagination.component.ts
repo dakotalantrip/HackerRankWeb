@@ -7,7 +7,6 @@ import {
   debounceTime,
   distinctUntilChanged,
   Observable,
-  skip,
   Subscription,
   switchMap,
   tap,
@@ -76,7 +75,6 @@ export class ServerPaginationComponent implements OnInit, OnDestroy {
       this.subscription.add(
         combineLatest([searchTerm$, currentPage$])
         .pipe(
-          skip(1),
           debounceTime(100),
           switchMap(([searchTerm, currentPage]) => {
             return this.search(searchTerm);
